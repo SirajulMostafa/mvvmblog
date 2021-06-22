@@ -3,37 +3,41 @@ package com.mostafa.mvvmblog.data.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Posts implements Parcelable {
+public class Post implements Parcelable {
     private  int userId;
     private  int id;
     private String title;
     private String body;
 
-    public Posts(int userId, int id, String title, String body) {
+    public Post(int userId, int id, String title, String body) {
         this.userId = userId;
         this.id = id;
         this.title = title;
         this.body = body;
     }
 
-    protected Posts(Parcel in) {
+    protected Post(Parcel in) {
         userId = in.readInt();
         id = in.readInt();
         title = in.readString();
         body = in.readString();
     }
 
-    public static final Creator<Posts> CREATOR = new Creator<Posts>() {
+    public static final Creator<Post> CREATOR = new Creator<Post>() {
         @Override
-        public Posts createFromParcel(Parcel in) {
-            return new Posts(in);
+        public Post createFromParcel(Parcel in) {
+            return new Post(in);
         }
 
         @Override
-        public Posts[] newArray(int size) {
-            return new Posts[size];
+        public Post[] newArray(int size) {
+            return new Post[size];
         }
     };
+
+    public Post() {
+
+    }
 
     public int getUserId() {
         return userId;
