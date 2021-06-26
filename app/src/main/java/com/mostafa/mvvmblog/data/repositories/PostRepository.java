@@ -16,8 +16,8 @@ public class PostRepository {
 
     //singleton
     private  static PostRepository instance;
-    private MediatorLiveData<List<Post>> mPosts= new MediatorLiveData<>() ;
-    private PostApi postApi;
+    private MediatorLiveData<List<Post>> mPosts;
+//    private PostApi postApi;
 
     public static PostRepository getInstance() {
         if (instance==null){
@@ -26,8 +26,7 @@ public class PostRepository {
         return instance;
     }
     private  PostRepository(){
-       // mPosts = new MutableLiveData<>();
-       postApi = ServiceGenerator.getPostApi();
+        mPosts = new MediatorLiveData<List<Post>>();
 
 
     }
@@ -35,9 +34,6 @@ public class PostRepository {
 
     public LiveData<List<Post>> getPosts(){
         return mPosts;
-    }
-    public PostApi getPostApi(){
-        return postApi;
     }
 
 
