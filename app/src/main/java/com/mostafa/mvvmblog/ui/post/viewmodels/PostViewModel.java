@@ -29,6 +29,7 @@ public class PostViewModel extends ViewModel {
 
 
     public LiveData<Resource<List<Post>>> observePosts() {
+         //next time we will make this function in another class and simply will be called here
         if (posts == null) {
             posts = new MediatorLiveData<>();
             posts.setValue(Resource.loading((List<Post>) null));

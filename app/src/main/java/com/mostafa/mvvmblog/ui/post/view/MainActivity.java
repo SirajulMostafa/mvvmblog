@@ -2,12 +2,18 @@ package com.mostafa.mvvmblog.ui.post.view;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.mostafa.mvvmblog.R;
+import com.mostafa.mvvmblog.ui.post.adapter.PostRecyclerAdapter;
 import com.mostafa.mvvmblog.data.models.Post;
 import com.mostafa.mvvmblog.ui.post.viewmodels.PostViewModel;
 import com.mostafa.mvvmblog.utils.Resource;
@@ -18,18 +24,36 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private PostViewModel viewModel;
+    private RecyclerView mRecyclerView;
+    PostRecyclerAdapter mAdapter;
+    private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        viewModel = new ViewModelProvider(this).get(PostViewModel.class);
+        mProgressBar = findViewById(R.id.progress_bar);
+        mRecyclerView = findViewById(R.id.post_list);
+        setUpViewModel();
+        subscribeObervers();//setupObserver
+        setUpUI();
+    }
 
-        subscribeObervers();
+    private void setUpUI() {
+
+        mAdapter = new PostRecyclerAdapter();
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+    }
+
+    private void setUpViewModel() {
+        viewModel = new ViewModelProvider(this).get(PostViewModel.class);
     }
 
     private void subscribeObervers() {
-//        viewModel.observePosts().removeObservers(this);
+//      viewModel.observePosts().removeObservers(this);
+//        viewModel.observePosts().removeObservers(getViewLifecycleOwner());it will be in fragment
         viewModel.observePosts().observe(this, new Observer<Resource<List<Post>>>() {
             @Override
             public void onChanged(Resource<List<Post>> listResource) {
@@ -38,21 +62,19 @@ public class MainActivity extends AppCompatActivity {
 
                         case LOADING: {
                             Log.d(TAG, "onChanged: LOADING...");
+                            showProgressBar(true);
                             break;
                         }
 
                         case SUCCESS: {
-                            Log.d(TAG, "onChanged: got posts..." + listResource.data.size());
-                            Log.d(TAG, "onChanged: see first post..." +  listResource.data.get(0).getTitle().toString());
-                            // adapter.setPosts(listResource.data);
-                            for (Post post : listResource.data) {
-                                Log.d(TAG, "onChanged: "+post);
-                            }
-
+                            mAdapter.setPosts(listResource.data);
+                            showProgressBar(false);
                             break;
                         }
 
                         case ERROR: {
+                            showProgressBar(false);
+                            Toast.makeText(MainActivity.this, listResource.message, Toast.LENGTH_SHORT).show();
                             Log.e(TAG, "onChanged: ERROR..." + listResource.message);
                             break;
                         }
@@ -60,5 +82,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void showProgressBar(boolean visibility) {
+        mProgressBar.setVisibility(visibility ? View.VISIBLE : View.INVISIBLE);
     }
 }
