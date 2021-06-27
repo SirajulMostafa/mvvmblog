@@ -16,4 +16,6 @@ public class ServiceGenerator {
             .build();
     private static PostApi postApi = retrofit.create(PostApi.class);
     public static PostApi getPostApi() { return postApi; }
+    private static UserApi userApi = retrofit.create(UserApi.class);
+    public static UserApi getUserApi() { return userApi; }
 }
